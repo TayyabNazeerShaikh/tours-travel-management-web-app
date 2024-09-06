@@ -1,0 +1,36 @@
+﻿@model IEnumerable<ToursAndTravelsManagement.Models.Booking>
+
+@{
+    ViewData["Title"] = "Bookings";
+}
+
+<h1>Bookings</h1>
+
+<p>
+    <a href="@Url.Action("Create")">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>User ID</th>
+            <th>Tour ID</th>
+            <th>Booking Date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td>@booking.UserId</td>
+                <td>@booking.TourId</td>
+                <td>@booking.BookingDate.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@booking.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@booking.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

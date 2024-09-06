@@ -1,0 +1,17 @@
+﻿@model ToursAndTravelsManagement.Models.Destination
+
+@{
+    ViewData["Title"] = "Edit Destination";
+}
+
+<h1>Edit Destination</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Location"></label>
+        <input asp-for="Location" class="form-control" />
+        <span asp-validation-for="Location" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

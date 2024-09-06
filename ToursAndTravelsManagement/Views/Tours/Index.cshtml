@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ToursAndTravelsManagement.Models.Tour>
+
+@{
+    ViewData["Title"] = "Tours";
+}
+
+<h1>Tours</h1>
+
+<p>
+    <a href="@Url.Action("Create")">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tour in Model)
+        {
+            <tr>
+                <td>@tour.Name</td>
+                <td>@tour.Description</td>
+                <td>@tour.Price</td>
+                <td>@tour.StartDate.ToString("yyyy-MM-dd")</td>
+                <td>@tour.EndDate.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@tour.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@tour.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

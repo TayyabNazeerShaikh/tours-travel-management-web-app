@@ -1,0 +1,32 @@
+﻿@model IEnumerable<ToursAndTravelsManagement.Models.Destination>
+
+@{
+    ViewData["Title"] = "Destinations";
+}
+
+<h1>Destinations</h1>
+
+<p>
+    <a href="@Url.Action("Create")">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Location</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var destination in Model)
+        {
+            <tr>
+                <td>@destination.Location</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@destination.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@destination.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
