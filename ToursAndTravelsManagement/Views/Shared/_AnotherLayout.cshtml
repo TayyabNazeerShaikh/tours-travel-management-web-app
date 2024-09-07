@@ -62,6 +62,7 @@
                             <a class="nav-link" href="#blog">Blog</a>
                         </li>
                     </ul>
+                    <a href="#" class="btn btn-brand ms-lg-3">Download</a>
                     <ul class="navbar-nav">
                         @if (User.Identity.IsAuthenticated)
                         {
@@ -86,8 +87,8 @@
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div>
+        <main role="main">
             @RenderBody()
         </main>
     </div>
