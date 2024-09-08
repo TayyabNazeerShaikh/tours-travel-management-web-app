@@ -1,10 +1,12 @@
-﻿namespace ToursAndTravelsManagement.Repositories.IRepositories;
+﻿using System.Linq.Expressions;
 
-public interface IRepository<T> where T : class
+namespace ToursAndTravelsManagement.Repositories.IRepositories;
+
+public interface IGenericRepository<T> where T : class
 {
-    Task<T> GetByIdAsync(int id);
-    Task<IEnumerable<T>> GetAllAsync();
+    Task<IEnumerable<T>> GetAllAsync(string includeProperties = null);
+    Task<T> GetByIdAsync(int id, string includeProperties = null);
     Task AddAsync(T entity);
     void Update(T entity);
-    void Delete(T entity);
+    void Remove(T entity);
 }

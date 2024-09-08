@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ToursAndTravelsManagement.Models;
 using ToursAndTravelsManagement.Repositories.IRepositories;
 
@@ -13,26 +15,51 @@ public class DestinationsController : Controller
         _unitOfWork = unitOfWork;
     }
 
+    // GET: Destinations
     public async Task<IActionResult> Index()
     {
-        var destinations = await _unitOfWork.Destinations.GetAllAsync();
+        var destinations = await _unitOfWork.DestinationRepository.GetAllAsync();
         return View(destinations);
     }
 
-    public IActionResult Create() => View();
+    // GET: Destinations/Details/5
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
 
+        var destination = await _unitOfWork.DestinationRepository.GetByIdAsync(id.Value);
+        if (destination == null)
+        {
+            return NotFound();
+        }
+
+        return View(destination);
+    }
+
+    // GET: Destinations/Create
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    // POST: Destinations/Create
     [HttpPost]
-    public async Task<IActionResult> Create(Destination destination)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create([Bind("Name,Description,Country,City,ImageUrl,CreatedBy,CreatedDate,IsActive")] Destination destination)
     {
         if (ModelState.IsValid)
         {
-            await _unitOfWork.Destinations.AddAsync(destination);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.DestinationRepository.AddAsync(destination);
+            await _unitOfWork.CompleteAsync();
             return RedirectToAction(nameof(Index));
         }
         return View(destination);
     }
 
+    // GET: Destinations/Edit/5
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -40,8 +67,7 @@ public class DestinationsController : Controller
             return NotFound();
         }
 
-        var destination = await _unitOfWork.Destinations.GetByIdAsync(id.Value);
-
+        var destination = await _unitOfWork.DestinationRepository.GetByIdAsync(id.Value);
         if (destination == null)
         {
             return NotFound();
@@ -50,24 +76,40 @@ public class DestinationsController : Controller
         return View(destination);
     }
 
+    // POST: Destinations/Edit/5
     [HttpPost]
-    public async Task<IActionResult> Edit(int id, Destination destination)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, [Bind("DestinationId,Name,Description,Country,City,ImageUrl,CreatedBy,CreatedDate,IsActive")] Destination destination)
     {
-        if (id != destination.Id)
+        if (id != destination.DestinationId)
         {
             return NotFound();
         }
 
         if (ModelState.IsValid)
         {
-            _unitOfWork.Destinations.Update(destination);
-            await _unitOfWork.SaveAsync();
+            try
+            {
+                _unitOfWork.DestinationRepository.Update(destination);
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DestinationExists(destination.DestinationId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
             return RedirectToAction(nameof(Index));
         }
-
         return View(destination);
     }
 
+    // GET: Destinations/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -75,8 +117,7 @@ public class DestinationsController : Controller
             return NotFound();
         }
 
-        var destination = await _unitOfWork.Destinations.GetByIdAsync(id.Value);
-
+        var destination = await _unitOfWork.DestinationRepository.GetByIdAsync(id.Value);
         if (destination == null)
         {
             return NotFound();
@@ -85,12 +126,24 @@ public class DestinationsController : Controller
         return View(destination);
     }
 
+    // POST: Destinations/Delete/5
     [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var destination = await _unitOfWork.Destinations.GetByIdAsync(id);
-        _unitOfWork.Destinations.Delete(destination);
-        await _unitOfWork.SaveAsync();
+        var destination = await _unitOfWork.DestinationRepository.GetByIdAsync(id);
+        if (destination == null)
+        {
+            return NotFound();
+        }
+
+        _unitOfWork.DestinationRepository.Remove(destination);
+        await _unitOfWork.CompleteAsync();
         return RedirectToAction(nameof(Index));
+    }
+
+    private bool DestinationExists(int id)
+    {
+        return _unitOfWork.DestinationRepository.GetByIdAsync(id) != null;
     }
 }

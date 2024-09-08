@@ -1,28 +1,68 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
+using System.Reflection;
 using ToursAndTravelsManagement.Data;
 using ToursAndTravelsManagement.Repositories.IRepositories;
 
 namespace ToursAndTravelsManagement.Repositories;
 
-public class Repository<T> : IRepository<T> where T : class
+public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
     private readonly ApplicationDbContext _context;
     private readonly DbSet<T> _dbSet;
+    private readonly PropertyInfo _primaryKeyProperty;
 
-    public Repository(ApplicationDbContext context)
+    public GenericRepository(ApplicationDbContext context)
     {
         _context = context;
-        _dbSet = _context.Set<T>();
+        _dbSet = context.Set<T>();
+        _primaryKeyProperty = GetPrimaryKeyProperty();
     }
 
-    public async Task<T> GetByIdAsync(int id)
+    private PropertyInfo GetPrimaryKeyProperty()
     {
-        return await _dbSet.FindAsync(id);
+        var entityType = typeof(T);
+        var keyProperties = entityType.GetProperties()
+            .Where(p => p.GetCustomAttributes(typeof(KeyAttribute), true).Any())
+            .ToList();
+
+        if (keyProperties.Count != 1)
+        {
+            throw new InvalidOperationException($"Entity type {entityType.Name} has no or multiple Key attributes.");
+        }
+
+        return keyProperties.Single();
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public async Task<IEnumerable<T>> GetAllAsync(string includeProperties = null)
     {
-        return await _dbSet.ToListAsync();
+        IQueryable<T> query = _dbSet;
+
+        if (!string.IsNullOrEmpty(includeProperties))
+        {
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+        }
+
+        return await query.ToListAsync();
+    }
+
+    public async Task<T> GetByIdAsync(int id, string includeProperties = null)
+    {
+        IQueryable<T> query = _dbSet.Where(e => EF.Property<int>(e, _primaryKeyProperty.Name) == id);
+
+        if (!string.IsNullOrEmpty(includeProperties))
+        {
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+        }
+
+        return await query.FirstOrDefaultAsync();
     }
 
     public async Task AddAsync(T entity)
@@ -32,10 +72,11 @@ public class Repository<T> : IRepository<T> where T : class
 
     public void Update(T entity)
     {
-        _dbSet.Update(entity);
+        _dbSet.Attach(entity);
+        _context.Entry(entity).State = EntityState.Modified;
     }
 
-    public void Delete(T entity)
+    public void Remove(T entity)
     {
         _dbSet.Remove(entity);
     }

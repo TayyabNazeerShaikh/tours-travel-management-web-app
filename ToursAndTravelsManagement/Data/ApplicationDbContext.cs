@@ -4,11 +4,21 @@ using ToursAndTravelsManagement.Models;
 
 namespace ToursAndTravelsManagement.Data;
 
-public class ApplicationDbContext : IdentityDbContext<User>
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+    {
+    }
 
+    public DbSet<Booking> Bookings { get; set; }
     public DbSet<Tour> Tours { get; set; }
     public DbSet<Destination> Destinations { get; set; }
-    public DbSet<Booking> Bookings { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Additional configurations if needed
+    }
 }

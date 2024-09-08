@@ -7,24 +7,54 @@ namespace ToursAndTravelsManagement.Repositories;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext _context;
-
-    public IRepository<Tour> Tours { get; private set; }
-    public IRepository<Destination> Destinations { get; private set; }
-    public IRepository<Booking> Bookings { get; private set; }
-    public IRepository<User> Users { get; private set; }
+    private IGenericRepository<Booking> _bookingRepository;
+    private IGenericRepository<Tour> _tourRepository;
+    private IGenericRepository<Destination> _destinationRepository;
 
     public UnitOfWork(ApplicationDbContext context)
     {
         _context = context;
-        Tours = new Repository<Tour>(_context);
-        Destinations = new Repository<Destination>(_context);
-        Bookings = new Repository<Booking>(_context);
-        Users = new Repository<User>(_context);
     }
 
-    public async Task<int> SaveAsync()
+    public IGenericRepository<Booking> BookingRepository
     {
-        return await _context.SaveChangesAsync();
+        get
+        {
+            if (_bookingRepository == null)
+            {
+                _bookingRepository = new GenericRepository<Booking>(_context);
+            }
+            return _bookingRepository;
+        }
+    }
+
+    public IGenericRepository<Tour> TourRepository
+    {
+        get
+        {
+            if (_tourRepository == null)
+            {
+                _tourRepository = new GenericRepository<Tour>(_context);
+            }
+            return _tourRepository;
+        }
+    }
+
+    public IGenericRepository<Destination> DestinationRepository
+    {
+        get
+        {
+            if (_destinationRepository == null)
+            {
+                _destinationRepository = new GenericRepository<Destination>(_context);
+            }
+            return _destinationRepository;
+        }
+    }
+
+    public async Task CompleteAsync()
+    {
+        await _context.SaveChangesAsync();
     }
 
     public void Dispose()
