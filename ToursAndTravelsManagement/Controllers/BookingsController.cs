@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using ToursAndTravelsManagement.Models;
 using ToursAndTravelsManagement.Repositories.IRepositories;
 
 namespace ToursAndTravelsManagement.Controllers;
+
+[Authorize(Policy = "RequireAdminRole")]
 public class BookingsController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -18,9 +22,14 @@ public class BookingsController : Controller
     }
 
     // GET: Bookings
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int? pageNumber, int? pageSize)
     {
-        var bookings = await _unitOfWork.BookingRepository.GetAllAsync("User,Tour");
+        Log.Information("Fetching bookings with pageNumber: {PageNumber}, pageSize: {PageSize}", pageNumber, pageSize);
+
+        int pageIndex = pageNumber ?? 1;
+        int size = pageSize ?? 10;
+
+        var bookings = await _unitOfWork.BookingRepository.GetPaginatedAsync(pageIndex, size, "User,Tour");
         return View(bookings);
     }
 
@@ -29,12 +38,16 @@ public class BookingsController : Controller
     {
         if (id == null)
         {
+            Log.Warning("Details action called with null id");
             return NotFound();
         }
+
+        Log.Information("Fetching details for booking with id: {Id}", id);
 
         var booking = await _unitOfWork.BookingRepository.GetByIdAsync(id.Value, "User,Tour");
         if (booking == null)
         {
+            Log.Warning("Booking with id {Id} not found", id);
             return NotFound();
         }
 
@@ -44,6 +57,8 @@ public class BookingsController : Controller
     // GET: Bookings/Create
     public async Task<IActionResult> Create()
     {
+        Log.Information("Creating a new booking");
+
         var users = await _userManager.Users.ToListAsync();
         ViewBag.UserId = new SelectList(users, "Id", "UserName");
         ViewBag.TourId = new SelectList(await _unitOfWork.TourRepository.GetAllAsync(), "TourId", "Name");
@@ -57,7 +72,8 @@ public class BookingsController : Controller
     {
         if (ModelState.IsValid)
         {
-            // Automatically populate CreatedBy with the current user's ID
+            Log.Information("Creating booking with UserId: {UserId}, TourId: {TourId}", booking.UserId, booking.TourId);
+
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser != null)
             {
@@ -68,8 +84,14 @@ public class BookingsController : Controller
             booking.IsActive = true;
             await _unitOfWork.BookingRepository.AddAsync(booking);
             await _unitOfWork.CompleteAsync();
+
+            Log.Information("Booking created successfully with BookingId: {BookingId}", booking.BookingId);
+
             return RedirectToAction(nameof(Index));
         }
+
+        Log.Warning("Model state is invalid for creating booking");
+
         var users = await _userManager.Users.ToListAsync();
         ViewBag.UserId = new SelectList(users, "Id", "UserName", booking.UserId);
         ViewBag.TourId = new SelectList(await _unitOfWork.TourRepository.GetAllAsync(), "TourId", "Name", booking.TourId);
@@ -81,12 +103,16 @@ public class BookingsController : Controller
     {
         if (id == null)
         {
+            Log.Warning("Edit action called with null id");
             return NotFound();
         }
+
+        Log.Information("Editing booking with id: {Id}", id);
 
         var booking = await _unitOfWork.BookingRepository.GetByIdAsync(id.Value, "User,Tour");
         if (booking == null)
         {
+            Log.Warning("Booking with id {Id} not found", id);
             return NotFound();
         }
 
@@ -103,6 +129,7 @@ public class BookingsController : Controller
     {
         if (id != booking.BookingId)
         {
+            Log.Warning("Edit action called with mismatched ids: {Id} != {BookingId}", id, booking.BookingId);
             return NotFound();
         }
 
@@ -110,22 +137,31 @@ public class BookingsController : Controller
         {
             try
             {
+                Log.Information("Updating booking with BookingId: {BookingId}", booking.BookingId);
+
                 _unitOfWork.BookingRepository.Update(booking);
                 await _unitOfWork.CompleteAsync();
+
+                Log.Information("Booking with BookingId: {BookingId} updated successfully", booking.BookingId);
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!BookingExists(booking.BookingId))
                 {
+                    Log.Warning("Booking with BookingId: {BookingId} not found during update", booking.BookingId);
                     return NotFound();
                 }
                 else
                 {
+                    Log.Error("Concurrency exception occurred while updating booking with BookingId: {BookingId}", booking.BookingId);
                     throw;
                 }
             }
             return RedirectToAction(nameof(Index));
         }
+
+        Log.Warning("Model state is invalid for updating booking with BookingId: {BookingId}", booking.BookingId);
+
         var users = await _userManager.Users.ToListAsync();
         ViewBag.UserId = new SelectList(users, "Id", "UserName", booking.UserId);
         ViewBag.TourId = new SelectList(await _unitOfWork.TourRepository.GetAllAsync(), "TourId", "Name", booking.TourId);
@@ -137,12 +173,16 @@ public class BookingsController : Controller
     {
         if (id == null)
         {
+            Log.Warning("Delete action called with null id");
             return NotFound();
         }
+
+        Log.Information("Deleting booking with id: {Id}", id);
 
         var booking = await _unitOfWork.BookingRepository.GetByIdAsync(id.Value, "User,Tour");
         if (booking == null)
         {
+            Log.Warning("Booking with id {Id} not found", id);
             return NotFound();
         }
 
@@ -154,19 +194,27 @@ public class BookingsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
+        Log.Information("Deleting booking with BookingId: {BookingId}", id);
+
         var booking = await _unitOfWork.BookingRepository.GetByIdAsync(id);
         if (booking == null)
         {
+            Log.Warning("Booking with BookingId: {BookingId} not found during delete", id);
             return NotFound();
         }
 
         _unitOfWork.BookingRepository.Remove(booking);
         await _unitOfWork.CompleteAsync();
+
+        Log.Information("Booking with BookingId: {BookingId} deleted successfully", id);
+
         return RedirectToAction(nameof(Index));
     }
 
     private bool BookingExists(int id)
     {
-        return _unitOfWork.BookingRepository.GetByIdAsync(id) != null;
+        var exists = _unitOfWork.BookingRepository.GetByIdAsync(id) != null;
+        Log.Information("Booking with id {Id} exists: {Exists}", id, exists);
+        return exists;
     }
 }

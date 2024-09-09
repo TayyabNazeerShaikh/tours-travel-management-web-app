@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using ToursAndTravelsManagement.Enums;
 
 namespace ToursAndTravelsManagement.Models;
 public class Booking
@@ -39,18 +40,4 @@ public class Booking
     public DateTime CreatedDate { get; set; }
 
     public bool IsActive { get; set; }
-}
-
-public enum BookingStatus
-{
-    Pending,
-    Confirmed,
-    Cancelled
-}
-
-public enum PaymentStatus
-{
-    Pending,
-    Completed,
-    Failed
 }

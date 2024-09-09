@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+﻿using ToursAndTravelsManagement.Common;
 
 namespace ToursAndTravelsManagement.Repositories.IRepositories;
 
@@ -9,4 +9,5 @@ public interface IGenericRepository<T> where T : class
     Task AddAsync(T entity);
     void Update(T entity);
     void Remove(T entity);
+    Task<PaginatedList<T>> GetPaginatedAsync(int pageNumber, int pageSize, string includeProperties = null);
 }

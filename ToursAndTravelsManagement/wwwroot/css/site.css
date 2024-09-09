@@ -20,3 +20,67 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.error-page {
+    text-align: center;
+}
+
+.error-code {
+    font-size: 10em;
+    color: #dc3545;
+}
+
+.error-message {
+    font-size: 2em;
+    color: #6c757d;
+}
+
+.gears {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 20px auto;
+}
+
+.gear {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    animation: spin 10s infinite linear;
+}
+
+    .gear.one {
+        animation-delay: -5s;
+    }
+
+.bar {
+    position: absolute;
+    width: 4px;
+    height: 100%;
+    background-color: #dc3545;
+    left: 50%;
+    margin-left: -2px;
+    border-radius: 2px;
+}
+
+    .bar:nth-child(1) {
+        transform: rotate(0deg);
+    }
+
+    .bar:nth-child(2) {
+        transform: rotate(120deg);
+    }
+
+    .bar:nth-child(3) {
+        transform: rotate(240deg);
+    }
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

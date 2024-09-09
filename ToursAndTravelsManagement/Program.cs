@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Serilog.Events;
+using Serilog.Formatting.Compact;
+using Serilog;
 using ToursAndTravelsManagement.Data;
+using ToursAndTravelsManagement.Middlewares;
 using ToursAndTravelsManagement.Models;
 using ToursAndTravelsManagement.Repositories;
 using ToursAndTravelsManagement.Repositories.IRepositories;
+using ToursAndTravelsManagement.Services;
 
 namespace ToursAndTravelsManagement;
 
@@ -21,11 +25,31 @@ public class Program
             options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
+                        .AddEntityFrameworkStores<ApplicationDbContext>()
+                        .AddDefaultTokenProviders();
 
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+        builder.Services.AddTransient<IEmailService, EmailService>();
+
+        // Configure authorization
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+            options.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
+        });
+
+        // Configure Serilog
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .Enrich.FromLogContext()
+            .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day,
+                          outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+            .CreateLogger();
+
+        builder.Host.UseSerilog(); // Add Serilog
 
         var app = builder.Build();
 
@@ -44,6 +68,12 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        // Use the global exception handling middleware
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+        // Use the global error handling middleware
+        app.UseMiddleware<GlobalErrorHandlingMiddleware>();
 
         app.MapControllerRoute(
             name: "default",

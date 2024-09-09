@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
 using System.Reflection;
+using ToursAndTravelsManagement.Common;
 using ToursAndTravelsManagement.Data;
 using ToursAndTravelsManagement.Repositories.IRepositories;
 
@@ -79,5 +79,22 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public void Remove(T entity)
     {
         _dbSet.Remove(entity);
+    }
+    public async Task<PaginatedList<T>> GetPaginatedAsync(int pageNumber, int pageSize, string includeProperties = null)
+    {
+        IQueryable<T> query = _dbSet;
+
+        if (!string.IsNullOrEmpty(includeProperties))
+        {
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+        }
+
+        var totalCount = await query.CountAsync();
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+        return new PaginatedList<T>(items, totalCount, pageNumber, pageSize);
     }
 }

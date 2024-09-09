@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ToursAndTravelsManagement.Attributes;
 
 namespace ToursAndTravelsManagement.Models;
-
 public class Tour
 {
     [Key]
@@ -12,12 +12,13 @@ public class Tour
     [Required]
     public string Name { get; set; }
 
-    public string Description { get; set; }
+    public string? Description { get; set; } = string.Empty;
 
     [Required]
     public DateTime StartDate { get; set; }
 
     [Required]
+    [FutureDate]
     public DateTime EndDate { get; set; }
 
     [Required]

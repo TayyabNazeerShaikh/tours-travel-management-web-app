@@ -1,4 +1,6 @@
-﻿@{
+﻿@using ToursAndTravelsManagement.Services
+@model ContactFormModel
+@{
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/_AnotherLayout.cshtml";
 }
@@ -8,7 +10,9 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1 data-aos="fade-left" class="text-uppercase text-white fw-semibold display-1">Welcome to elixir</h1>
+                <h1 data-aos="fade-left" class="text-uppercase text-white fw-semibold display-3">Welcome to our
+                    <span class="fw-bold">Tours and Travels Management System</span>
+                </h1>
                 <h5 class="text-white mt-3 mb-4" data-aos="fade-right">We specialize in crafting unforgettable travel experiences that cater to your unique interests and preferences. With a passion for travel and a commitment to exceptional service, we are your trusted partners in exploring the globe.</h5>
                 <div data-aos="fade-up" data-aos-delay="50">
                     <a href="#" class="btn btn-brand me-2">Get Started</a>
@@ -36,8 +40,8 @@
                 <img src="~/images/about.jpg" alt="">
             </div>
             <div data-aos="fade-down" data-aos-delay="150" class="col-lg-5">
-                <h1>About Elixir</h1>
-                <p class="mt-3 mb-4">At Elixir, we believe in creating magical journeys that leave lasting memories. Our team of travel enthusiasts is dedicated to curating unique and personalized travel experiences that cater to your wanderlust.</p>
+                <h1>About Tours and Travels Management System</h1>
+                <p class="mt-3 mb-4">At Tours and Travels Management System, we believe in creating magical journeys that leave lasting memories. Our team of travel enthusiasts is dedicated to curating unique and personalized travel experiences that cater to your wanderlust.</p>
                 <div class="d-flex pt-4 mb-3">
                     <div class="iconbox me-4">
                         <i class="ri-mail-send-fill"></i>
@@ -437,24 +441,29 @@
         </div>
         <div class="row justify-content-center" data-aos="fade-down" data-aos-delay="250">
             <div class="col-lg-8">
-                <form action="#" class="row g-3 p-lg-5 p-4 bg-white theme-shadow">
+                <form asp-action="SubmitForm" method="post" class="row g-3 p-lg-5 p-4 bg-white theme-shadow">
                     <div class="form-group col-lg-6">
-                        <input type="text" class="form-control" placeholder="Enter first name">
+                        <input asp-for="FirstName" class="form-control" placeholder="Enter first name" required />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
                     </div>
                     <div class="form-group col-lg-6">
-                        <input type="text" class="form-control" placeholder="Enter last name">
+                        <input asp-for="LastName" class="form-control" placeholder="Enter last name" required />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
                     </div>
                     <div class="form-group col-lg-12">
-                        <input type="email" class="form-control" placeholder="Enter Email address">
+                        <input asp-for="Email" type="email" class="form-control" placeholder="Enter Email address" required />
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="form-group col-lg-12">
-                        <input type="text" class="form-control" placeholder="Enter subject">
+                        <input asp-for="Subject" class="form-control" placeholder="Enter subject" required />
+                        <span asp-validation-for="Subject" class="text-danger"></span>
                     </div>
                     <div class="form-group col-lg-12">
-                        <textarea name="message" rows="5" class="form-control" placeholder="Enter Message"></textarea>
+                        <textarea asp-for="Message" rows="5" class="form-control" placeholder="Enter Message" required></textarea>
+                        <span asp-validation-for="Message" class="text-danger"></span>
                     </div>
                     <div class="form-group col-lg-12 d-grid">
-                        <button class="btn btn-brand">Send Message</button>
+                        <button type="submit" class="btn btn-brand">Send Message</button>
                     </div>
                 </form>
             </div>
