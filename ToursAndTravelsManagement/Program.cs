@@ -51,6 +51,8 @@ public class Program
 
         builder.Host.UseSerilog(); // Add Serilog
 
+        builder.Services.AddScoped<DataSeeder>();
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -78,6 +80,22 @@ public class Program
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
+
+        // Ensure the database is seeded with fake data
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            var dataSeeder = services.GetRequiredService<DataSeeder>();
+
+            // Seed 100 fake destinations
+            // dataSeeder.SeedDestinationsAsync(1000);
+
+            // Seed 1000 fake tours
+            //dataSeeder.SeedToursAsync(1000);
+
+            // Seed 1000 fake bookings
+            //dataSeeder.SeedBookingsAsync(1000);
+        }
 
         app.Run();
     }
