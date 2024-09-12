@@ -1,4 +1,4 @@
-﻿namespace ToursAndTravelsManagement.Services;
+﻿namespace ToursAndTravelsManagement.Services.EmailService;
 
 public class EmailSettings
 {

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using ToursAndTravelsManagement.Models;
 using ToursAndTravelsManagement.Repositories.IRepositories;
+using ToursAndTravelsManagement.Services.ExcelService;
+using ToursAndTravelsManagement.Services.PdfService;
 
 namespace ToursAndTravelsManagement.Controllers
 {
@@ -11,10 +13,38 @@ namespace ToursAndTravelsManagement.Controllers
     public class DestinationsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        public DestinationsController(IUnitOfWork unitOfWork)
+        private readonly IPdfService _pdfService;
+        private readonly IExcelExportService _excelExportService;
+        public DestinationsController(IUnitOfWork unitOfWork, IPdfService pdfService, IExcelExportService excelExportService)
         {
             _unitOfWork = unitOfWork;
+            _pdfService = pdfService;
+            _excelExportService = excelExportService;
+        }
+
+        // Export PDF Action
+        [HttpGet]
+        public async Task<IActionResult> ExportPdf()
+        {
+            var destinations = await _unitOfWork.DestinationRepository.GetAllAsync();
+            if (destinations == null || !destinations.Any())
+            {
+                return NotFound("No destinations found.");
+            }
+
+            // Generate the PDF
+            var pdfContent = _pdfService.GenerateDestinationsPdf(destinations.ToList());
+
+            // Return the PDF as a file download
+            return File(pdfContent, "application/pdf", "DestinationsReport.pdf");
+        }
+        // Export Excel Action
+        [HttpGet]
+        public async Task<IActionResult> ExportExcel()
+        {
+            var destinations = await _unitOfWork.DestinationRepository.GetAllAsync();
+            var excelContent = _excelExportService.ExportDestinationsToExcel(destinations.ToList());
+            return File(excelContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Destinations.xlsx");
         }
 
         // GET: Destinations

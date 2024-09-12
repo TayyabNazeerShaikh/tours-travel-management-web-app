@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ToursAndTravelsManagement.Services;
+namespace ToursAndTravelsManagement.Services.EmailService;
 
 public class ContactFormModel
 {

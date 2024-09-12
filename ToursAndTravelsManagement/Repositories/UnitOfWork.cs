@@ -1,4 +1,5 @@
-﻿using ToursAndTravelsManagement.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ToursAndTravelsManagement.Data;
 using ToursAndTravelsManagement.Models;
 using ToursAndTravelsManagement.Repositories.IRepositories;
 

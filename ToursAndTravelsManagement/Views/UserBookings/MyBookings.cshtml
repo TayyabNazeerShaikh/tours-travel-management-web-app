@@ -1,0 +1,48 @@
+﻿@model IEnumerable<ToursAndTravelsManagement.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">You have no bookings yet.</div>
+    }
+    else
+    {
+        <!-- Button for exporting bookings -->
+        <a href="@Url.Action("ExportBookingsPdf", "UserBookings")" class="btn btn-primary">
+            Export to PDF
+        </a>
+
+        <!-- Existing code for displaying bookings -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tour Name</th>
+                    <th>Booking Date</th>
+                    <th>Number of Participants</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var booking in Model)
+                {
+                    <tr>
+                        <td>@booking.Tour?.Name</td> <!-- Safely access Tour name -->
+                        <td>@booking.BookingDate.ToString("dd MMM yyyy")</td>
+                        <td>@booking.NumberOfParticipants</td>
+                        <td>@booking.TotalPrice.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+}

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System.Diagnostics;
 using ToursAndTravelsManagement.Models;
-using ToursAndTravelsManagement.Services;
+using ToursAndTravelsManagement.Services.EmailService;
 
 namespace ToursAndTravelsManagement.Controllers;
 

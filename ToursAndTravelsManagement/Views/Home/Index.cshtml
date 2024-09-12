@@ -1,5 +1,4 @@
-﻿@using ToursAndTravelsManagement.Services
-@model ContactFormModel
+﻿@model ToursAndTravelsManagement.Services.EmailService.ContactFormModel
 @{
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/_AnotherLayout.cshtml";
@@ -15,13 +14,77 @@
                 </h1>
                 <h5 class="text-white mt-3 mb-4" data-aos="fade-right">We specialize in crafting unforgettable travel experiences that cater to your unique interests and preferences. With a passion for travel and a commitment to exceptional service, we are your trusted partners in exploring the globe.</h5>
                 <div data-aos="fade-up" data-aos-delay="50">
-                    <a href="#" class="btn btn-brand me-2">Get Started</a>
+                    <a class="btn btn-warning me-2" asp-controller="UserBookings" asp-action="AvailableTours">Get Started</a>
                     <a href="#" class="btn btn-light ms-2">Our Portfolio</a>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- CAROUSEL -->
+<div id="tourCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#tourCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#tourCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#tourCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        <button type="button" data-bs-target="#tourCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        <button type="button" data-bs-target="#tourCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
+        <button type="button" data-bs-target="#tourCarousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="~/images/carousel (1).jpg" class="d-block w-100" alt="Historic City Tour">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Historic City Tour</h5>
+                <p>Delve into the rich history and culture of our city, visiting iconic landmarks and learning about the stories that shaped its past.</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="~/images/carousel (2).jpg" class="d-block w-100" alt="Nature's Wonders">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Nature's Wonders</h5>
+                <p>Escape to the great outdoors and marvel at the beauty of our natural landscapes. From lush forests to stunning mountains, this tour offers a chance to connect with nature and enjoy its tranquility.</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="~/images/carousel (3).jpg" class="d-block w-100" alt="Culinary Adventure">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Culinary Adventure</h5>
+                <p>Indulge in a gastronomic journey, exploring the local cuisine and sampling delicious dishes that reflect the region's culture and traditions.</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="~/images/carousel (1).jpg" class="d-block w-100" alt="Art and Culture Tour">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Art and Culture Tour</h5>
+                <p>Immerse yourself in the local arts scene, visiting museums, galleries, and workshops to discover the talents of the area's creatives.</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="~/images/carousel (2).jpg" class="d-block w-100" alt="Adrenaline Rush">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Adrenaline Rush</h5>
+                <p>For those seeking thrills, this tour offers a range of exciting activities, from white-water rafting to ziplining, ensuring an unforgettable and adrenaline-pumping experience.</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="~/images/carousel (3).jpg" class="d-block w-100" alt="Relaxation Retreat">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Relaxation Retreat</h5>
+                <p>Unwind and rejuvenate with our relaxation retreat tour, featuring spa treatments, yoga sessions, and opportunities to relax in beautiful, serene settings.</p>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#tourCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#tourCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
 
 <!-- ABOUT -->
 <section id="about" class="section-padding">
@@ -30,7 +93,7 @@
             <div class="col-12 text-center" data-aos="fade-down" data-aos-delay="50">
                 <div class="section-title">
                     <h1 class="display-4 fw-semibold">About us</h1>
-                    <div class="line"></div>
+                    <div class="line bg-warning"></div>
                     <p>We love to craft unforgettable travel experiences for adventurers rather than generic tours and mundane itineraries. Let’s explore the world with passion and creativity!</p>
                 </div>
             </div>
@@ -81,7 +144,7 @@
             <div class="col-12 text-center" data-aos="fade-down" data-aos-delay="150">
                 <div class="section-title">
                     <h1 class="display-4 fw-semibold">Awesome Services</h1>
-                    <div class="line"></div>
+                    <div class="line bg-warning"></div>
                     <p>We love to craft unforgettable travel experiences for adventurers rather than generic tours and mundane itineraries. Let’s explore the world with passion and creativity!</p>
                 </div>
             </div>
@@ -180,7 +243,7 @@
             <div class="col-12 text-center" data-aos="fade-down" data-aos-delay="150">
                 <div class="section-title">
                     <h1 class="display-4 fw-semibold">Our Portfolio</h1>
-                    <div class="line"></div>
+                    <div class="line bg-warning"></div>
                     <p>We love to create unforgettable travel experiences for explorers rather than generic tours and more mundane trips. Join us and discover the world with our unique skills and passion for adventure.</p>
                 </div>
             </div>
@@ -189,15 +252,15 @@
             <div class="col-md-4" data-aos="fade-down" data-aos-delay="150">
                 <div class="portfolio-item image-zoom">
                     <div class="image-zoom-wrapper">
-                        <img src="~/images/project-1.jpg" alt="">
+                        <img src="~/images/project-5.jpg" alt="">
                     </div>
-                    <a href="~/images/project-1.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line"></i></a>
+                    <a href="~/images/project-1.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line bg-warning"></i></a>
                 </div>
                 <div class="portfolio-item image-zoom mt-4">
                     <div class="image-zoom-wrapper">
                         <img src="~/images/project-2.jpg" alt="">
                     </div>
-                    <a href="~/images/project-2.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line"></i></a>
+                    <a href="~/images/project-2.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line bg-warning"></i></a>
                 </div>
             </div>
             <div class="col-md-4" data-aos="fade-down" data-aos-delay="250">
@@ -205,27 +268,27 @@
                     <div class="image-zoom-wrapper">
                         <img src="~/images/project-3.jpg" alt="">
                     </div>
-                    <a href="~/images/project-3.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line"></i></a>
+                    <a href="~/images/project-3.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line bg-warning"></i></a>
                 </div>
                 <div class="portfolio-item image-zoom mt-4">
                     <div class="image-zoom-wrapper">
                         <img src="~/images/project-4.jpg" alt="">
                     </div>
-                    <a href="~/images/project-4.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line"></i></a>
+                    <a href="~/images/project-4.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line bg-warning"></i></a>
                 </div>
             </div>
             <div class="col-md-4" data-aos="fade-down" data-aos-delay="350">
                 <div class="portfolio-item image-zoom">
                     <div class="image-zoom-wrapper">
-                        <img src="~/images/project-5.jpg" alt="">
+                        <img src="~/images/project-1.jpg" alt="">
                     </div>
-                    <a href="~/images/project-5.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line"></i></a>
+                    <a href="~/images/project-5.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line bg-warning"></i></a>
                 </div>
                 <div class="portfolio-item image-zoom mt-4">
                     <div class="image-zoom-wrapper">
                         <img src="~/images/project-6.jpg" alt="">
                     </div>
-                    <a href="~/images/project-6.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line"></i></a>
+                    <a href="~/images/project-6.jpg" data-fancybox="gallery" class="iconbox"><i class="ri-search-2-line bg-warning"></i></a>
                 </div>
             </div>
         </div>
@@ -239,7 +302,7 @@
             <div class="col-12 text-center" data-aos="fade-down" data-aos-delay="150">
                 <div class="section-title">
                     <h1 class="display-4 fw-semibold">Testimonials</h1>
-                    <div class="line"></div>
+                    <div class="line bg-warning"></div>
                     <p>We love to craft unforgettable travel experiences for adventurers rather than generic tours and mundane itineraries. Let’s explore the world with passion and creativity!</p>
                 </div>
             </div>
@@ -382,7 +445,7 @@
             <div class="col-12 text-center" data-aos="fade-down" data-aos-delay="150">
                 <div class="section-title">
                     <h1 class="display-4 fw-semibold">Our Best Drivers</h1>
-                    <div class="line"></div>
+                    <div class="line bg-warning"></div>
                     <p>We love to craft unforgettable travel experiences for adventurers rather than generic tours and mundane itineraries. Let’s explore the world with passion and creativity!</p>
                 </div>
             </div>
@@ -434,7 +497,7 @@
             <div class="col-12 text-center" data-aos="fade-down" data-aos-delay="150">
                 <div class="section-title">
                     <h1 class="display-4 text-white fw-semibold">Gete in touch</h1>
-                    <div class="line bg-white"></div>
+                    <div class="line bg-warning bg-white"></div>
                     <p class="text-white">We love to craft unforgettable travel experiences for adventurers rather than generic tours and mundane itineraries. Let’s explore the world with passion and creativity!</p>
                 </div>
             </div>
@@ -463,7 +526,7 @@
                         <span asp-validation-for="Message" class="text-danger"></span>
                     </div>
                     <div class="form-group col-lg-12 d-grid">
-                        <button type="submit" class="btn btn-brand">Send Message</button>
+                        <button type="submit" class="btn btn-warning">Send Message</button>
                     </div>
                 </form>
             </div>
@@ -478,7 +541,7 @@
             <div class="col-12 text-center" data-aos="fade-down" data-aos-delay="150">
                 <div class="section-title">
                     <h1 class="display-4 fw-semibold">Recent News & Articles</h1>
-                    <div class="line"></div>
+                    <div class="line bg-warning"></div>
                     <p>We love to craft unforgettable travel experiences for adventurers rather than generic tours and mundane itineraries. Let’s explore the world with passion and creativity!</p>
                 </div>
             </div>
@@ -523,3 +586,4 @@
         </div>
     </div>
 </section>
+

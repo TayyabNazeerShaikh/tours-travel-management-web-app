@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using ToursAndTravelsManagement.Models;
 using ToursAndTravelsManagement.Repositories.IRepositories;
+using ToursAndTravelsManagement.Services.ExcelService;
+using ToursAndTravelsManagement.Services.PdfService;
 
 namespace ToursAndTravelsManagement.Controllers;
 
@@ -13,12 +15,42 @@ namespace ToursAndTravelsManagement.Controllers;
 public class BookingsController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPdfService _pdfService;
+    private readonly IExcelExportService _excelExportService;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public BookingsController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+    public BookingsController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IPdfService pdfService, IExcelExportService excelExportService)
     {
         _unitOfWork = unitOfWork;
         _userManager = userManager;
+        _pdfService = pdfService;
+        _excelExportService = excelExportService;
+    }
+
+    // Export PDF Action
+    [HttpGet]
+    public async Task<IActionResult> ExportPdf()
+    {
+        var bookings = await _unitOfWork.BookingRepository.GetAllAsync(includeProperties: "User,Tour");
+        if (bookings == null || !bookings.Any())
+        {
+            return NotFound("No bookings found.");
+        }
+
+        // Generate the PDF
+        var pdfContent = _pdfService.GenerateBookingsPdf(bookings.ToList());
+
+        // Return the PDF as a file download
+        return File(pdfContent, "application/pdf", "BookingsReport.pdf");
+    }
+
+    // Export Excel Action
+    [HttpGet]
+    public async Task<IActionResult> ExportExcel()
+    {
+        var bookings = await _unitOfWork.BookingRepository.GetAllAsync(includeProperties: "User,Tour");
+        var excelContent = _excelExportService.ExportBookingsToExcel(bookings.ToList());
+        return File(excelContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Bookings.xlsx");
     }
 
     // GET: Bookings

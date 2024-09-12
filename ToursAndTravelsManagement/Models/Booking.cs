@@ -8,9 +8,7 @@ public class Booking
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int BookingId { get; set; }
-
-    [Required]
-    public string UserId { get; set; }
+    public string? UserId { get; set; }
     public ApplicationUser? User { get; set; }
 
     [Required]
@@ -29,7 +27,7 @@ public class Booking
     [Required]
     public BookingStatus Status { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Payment Method is required")]
     public string PaymentMethod { get; set; }
 
     [Required]

@@ -8,7 +8,10 @@ using ToursAndTravelsManagement.Middlewares;
 using ToursAndTravelsManagement.Models;
 using ToursAndTravelsManagement.Repositories;
 using ToursAndTravelsManagement.Repositories.IRepositories;
-using ToursAndTravelsManagement.Services;
+using ToursAndTravelsManagement.Services.EmailService;
+using ToursAndTravelsManagement.Services.PdfService;
+using QuestPDF.Infrastructure;
+using ToursAndTravelsManagement.Services.ExcelService;
 
 namespace ToursAndTravelsManagement;
 
@@ -29,7 +32,6 @@ public class Program
                         .AddDefaultTokenProviders();
 
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-        builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
         builder.Services.AddTransient<IEmailService, EmailService>();
 
@@ -52,6 +54,12 @@ public class Program
         builder.Host.UseSerilog(); // Add Serilog
 
         builder.Services.AddScoped<DataSeeder>();
+
+        // Add this line to configure the license type
+        QuestPDF.Settings.License = LicenseType.Community;
+        builder.Services.AddScoped<IPdfService, PdfService>();
+
+        builder.Services.AddScoped<IExcelExportService, ExcelExportService>();
 
         var app = builder.Build();
 
@@ -80,22 +88,6 @@ public class Program
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
-
-        // Ensure the database is seeded with fake data
-        using (var scope = app.Services.CreateScope())
-        {
-            var services = scope.ServiceProvider;
-            var dataSeeder = services.GetRequiredService<DataSeeder>();
-
-            // Seed 100 fake destinations
-            // dataSeeder.SeedDestinationsAsync(1000);
-
-            // Seed 1000 fake tours
-            //dataSeeder.SeedToursAsync(1000);
-
-            // Seed 1000 fake bookings
-            //dataSeeder.SeedBookingsAsync(1000);
-        }
 
         app.Run();
     }

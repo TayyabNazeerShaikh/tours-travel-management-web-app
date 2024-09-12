@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using System.Reflection;
 using ToursAndTravelsManagement.Common;
 using ToursAndTravelsManagement.Data;
+using ToursAndTravelsManagement.Models;
 using ToursAndTravelsManagement.Repositories.IRepositories;
 
 namespace ToursAndTravelsManagement.Repositories;
@@ -19,7 +21,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         _dbSet = context.Set<T>();
         _primaryKeyProperty = GetPrimaryKeyProperty();
     }
-
     private PropertyInfo GetPrimaryKeyProperty()
     {
         var entityType = typeof(T);
@@ -35,18 +36,21 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return keyProperties.Single();
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync(string includeProperties = null)
+    public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, string includeProperties = null)
     {
         IQueryable<T> query = _dbSet;
 
-        if (!string.IsNullOrEmpty(includeProperties))
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+        if (!string.IsNullOrWhiteSpace(includeProperties))
         {
             foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 query = query.Include(includeProperty);
             }
         }
-
         return await query.ToListAsync();
     }
 
