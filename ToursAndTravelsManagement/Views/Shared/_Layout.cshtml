@@ -64,6 +64,12 @@
                                     <a class="nav-link" asp-controller="UserBookings" asp-action="MyBookings">My bookings</a>
                                 </li>
                             }
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
                                     <button type="submit" class="btn btn-warning ms-lg-3">Logout</button>
