@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/tours.css" />
 </head>
 <body>
     <header>
@@ -26,6 +27,8 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                         @if (User.IsInRole("Admin"))
+                         {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Features
@@ -36,6 +39,7 @@
                                 <li><a class="dropdown-item" asp-controller="Bookings" asp-action="Index">Bookings</a></li>
                             </ul>
                         </li>
+                         }
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
@@ -60,6 +64,8 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#blog">Blog</a>
                         </li>
+                         @if (User.IsInRole("Admin"))
+                         {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Admin
@@ -70,11 +76,15 @@
                                 <li><a class="dropdown-item" asp-controller="DataGeneration" asp-action="GenerateBookings">Generate Bookings</a></li>
                             </ul>
                         </li>
+                         }
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="UserBookings" asp-action="MyBookings"><i class="ri-shopping-bag-line"></i></a>
-                            </li>
+                            @if (User.IsInRole("Customer"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="UserBookings" asp-action="MyBookings">My bookings</a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
                                     <button type="submit" class="btn btn-warning ms-lg-3">Logout</button>

@@ -110,6 +110,7 @@ public class UserBookingsController : Controller
 
 
     // GET: UserBookings/MyBookings
+    [HttpGet]
     public async Task<IActionResult> MyBookings()
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -125,6 +126,46 @@ public class UserBookingsController : Controller
         );
 
         return View(bookings);
+    }
+
+    // POST: UserBookings/MyBookings
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MyBookings(int bookingId, string action)
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+        if (currentUser == null)
+        {
+            return Unauthorized();
+        }
+
+        if (action == "Cancel")
+        {
+            var booking = await _unitOfWork.BookingRepository.GetByIdAsync(bookingId);
+            if (booking == null || booking.UserId != currentUser.Id)
+            {
+                return NotFound();
+            }
+
+            // Check if the booking is already canceled
+            if (booking.Status == BookingStatus.Canceled)
+            {
+                return BadRequest("Booking is already canceled.");
+            }
+
+            // Update booking status to canceled
+            booking.Status = BookingStatus.Canceled;
+            booking.IsActive = false;
+
+            _unitOfWork.BookingRepository.Update(booking);
+            await _unitOfWork.CompleteAsync();
+
+            // Redirect to the MyBookings view
+            return RedirectToAction("MyBookings");
+        }
+
+        // Fallback case, if action is not recognized
+        return BadRequest("Invalid action.");
     }
 
     [HttpGet]

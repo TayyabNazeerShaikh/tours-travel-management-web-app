@@ -1,48 +1,39 @@
 ﻿@model IEnumerable<ToursAndTravelsManagement.Models.Booking>
 
-@{
-    ViewData["Title"] = "My Bookings";
-}
+<h2>Your Bookings</h2>
 
-<div class="container mt-4">
-    <h1>@ViewData["Title"]</h1>
-
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info">You have no bookings yet.</div>
-    }
-    else
-    {
-        <!-- Button for exporting bookings -->
-        <a href="@Url.Action("ExportBookingsPdf", "UserBookings")" class="btn btn-primary">
-            Export to PDF
-        </a>
-
-        <!-- Existing code for displaying bookings -->
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Tour Name</th>
-                    <th>Booking Date</th>
-                    <th>Number of Participants</th>
-                    <th>Total Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var booking in Model)
-                {
-                    <tr>
-                        <td>@booking.Tour?.Name</td> <!-- Safely access Tour name -->
-                        <td>@booking.BookingDate.ToString("dd MMM yyyy")</td>
-                        <td>@booking.NumberOfParticipants</td>
-                        <td>@booking.TotalPrice.ToString("C")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-</div>
-
-@section Scripts {
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tour Name</th>
+            <th>Booking Date</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td>@(booking.Tour != null ? booking.Tour.Name : "No Tour")</td>
+                <td>@booking.BookingDate.ToShortDateString()</td>
+                <td>@booking.Status</td>
+                <td>
+                    @if (booking.Status != ToursAndTravelsManagement.Enums.BookingStatus.Canceled)
+                    {
+                        <form asp-action="MyBookings" method="post" style="display:inline;">
+                            <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                            <input type="hidden" name="action" value="Cancel" />
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Canceled</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

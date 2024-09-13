@@ -31,10 +31,8 @@
 
 @font-face {
     font-family: 'ClashDisplay';
-    src: url('../fonts/jetbrainsmono-regular.woff2') format('woff2');
-
-       /*font-weight: 200 700;
-       font-display: swap;
-       font-style: normal;*/
+    src: url('../fonts/sf-pro-rounded-regular.otf') format('opentype');
+    font-weight: 200 700;
+    font-display: swap;
+    font-style: normal;
 }
-
